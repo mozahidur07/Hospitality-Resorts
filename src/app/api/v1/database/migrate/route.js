@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { runMigrations, getCombinedMigrationSql } from "@/database/migrator";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const sql = getCombinedMigrationSql();
   return NextResponse.json({

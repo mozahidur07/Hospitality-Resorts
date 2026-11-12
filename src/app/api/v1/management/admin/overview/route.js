@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { getVerifiedSuperAdminSession } from "@/lib/auth/management-session";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const session = await getVerifiedSuperAdminSession();

@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getBookingByReference } from "@/features/bookings/services/booking.service";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request, { params }) {
   try {
     const { reference } = params;

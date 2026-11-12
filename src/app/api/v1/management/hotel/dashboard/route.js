@@ -3,6 +3,8 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 import { getHotelBySlug } from "@/features/hotels/services/mock-hotels.data";
 import { getVerifiedHotelAdminSession } from "@/lib/auth/management-session";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const session = await getVerifiedHotelAdminSession();

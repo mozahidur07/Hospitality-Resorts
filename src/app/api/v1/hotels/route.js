@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { MOCK_HOTELS } from "@/features/hotels/services/mock-hotels.data";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request) {
   const { searchParams } = new URL(request.url);
   const category = searchParams.get("category");

@@ -4,6 +4,8 @@ import {
   getClientReservations,
 } from "@/features/bookings/services/booking.service";
 
+export const dynamic = "force-dynamic";
+
 export async function POST(request) {
   try {
     const body = await request.json();

@@ -1,6 +1,9 @@
-import React from "react";
+import React, { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
+
+export const dynamic = "force-dynamic";
+
 import {
   ShieldCheck,
   Clock,
@@ -225,7 +228,20 @@ export default function HomePage() {
           </div>
 
           <div className="mt-12">
-            <HotelGrid initialHotels={featuredHotels} />
+            <Suspense
+              fallback={
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                  {[...Array(6)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="h-[430px] rounded-2xl bg-slate-100 dark:bg-slate-800 animate-pulse"
+                    />
+                  ))}
+                </div>
+              }
+            >
+              <HotelGrid initialHotels={featuredHotels} />
+            </Suspense>
           </div>
         </div>
       </section>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/utils";
 import { isHotelSaved, toggleSavedHotel } from "@/lib/storage/wishlist";
 
-export function HotelCard({ hotel }) {
+function HotelCardContent({ hotel }) {
   const hotelId = hotel.slug || hotel.id;
   const searchParams = useSearchParams();
   const queryString = searchParams?.toString();
@@ -186,4 +186,17 @@ export function HotelCard({ hotel }) {
     </div>
   );
 }
+
+export function HotelCard(props) {
+  return (
+    <Suspense
+      fallback={
+        <div className="h-[430px] w-full rounded-2xl border border-slate-100 bg-slate-50/70 p-4 animate-pulse dark:border-slate-800 dark:bg-slate-900/50" />
+      }
+    >
+      <HotelCardContent {...props} />
+    </Suspense>
+  );
+}
+
 
