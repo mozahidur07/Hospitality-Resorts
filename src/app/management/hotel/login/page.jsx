@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -21,6 +21,13 @@ import { getAllHotels } from "@/features/hotels/services/mock-hotels.data";
 export default function HotelPartnerLoginPage() {
   const router = useRouter();
   const allHotels = useMemo(() => getAllHotels(), []);
+
+  // Proactively prefetch the heavy hotel dashboard in advance for 0ms post-login transition
+  useEffect(() => {
+    try {
+      router.prefetch("/management/hotel/dashboard");
+    } catch (_) {}
+  }, [router]);
 
   const [hotelQuery, setHotelQuery] = useState("");
   const [selectedHotel, setSelectedHotel] = useState(null);

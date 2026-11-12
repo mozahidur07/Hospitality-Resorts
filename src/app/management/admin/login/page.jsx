@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -16,6 +16,14 @@ import {
 
 export default function SuperAdminLoginPage() {
   const router = useRouter();
+
+  // Proactively prefetch the heavy admin command center in advance for 0ms transition
+  useEffect(() => {
+    try {
+      router.prefetch("/management/admin/dashboard");
+    } catch (_) {}
+  }, [router]);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);

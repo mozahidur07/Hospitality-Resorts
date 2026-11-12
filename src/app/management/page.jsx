@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   Building2,
   ShieldCheck,
@@ -16,6 +17,17 @@ import {
 } from "lucide-react";
 
 export default function ManagementHubPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    try {
+      router.prefetch("/management/hotel/login");
+      router.prefetch("/management/admin/login");
+      router.prefetch("/management/hotel/dashboard");
+      router.prefetch("/management/admin/dashboard");
+    } catch (_) {}
+  }, [router]);
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 flex flex-col justify-between relative overflow-hidden">
       {/* Subtle Ambient Background Gradients */}

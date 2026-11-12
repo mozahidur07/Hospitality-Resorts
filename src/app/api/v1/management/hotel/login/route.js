@@ -30,12 +30,12 @@ export async function POST(request) {
       );
     }
 
-    // Check hotel_admins record in Supabase
+    // Check hotel_admins record in Supabase (fetch only required authentication columns for minimum latency)
     let adminRecord = null;
     try {
       const { data, error } = await supabaseAdmin
         .from("hotel_admins")
-        .select("*")
+        .select("status, password_hash")
         .eq("hotel_id", hotel.id)
         .maybeSingle();
 
@@ -62,12 +62,13 @@ export async function POST(request) {
         );
       }
 
-      try {
-        await supabaseAdmin
-          .from("hotel_admins")
-          .update({ last_login_at: new Date().toISOString() })
-          .eq("hotel_id", hotel.id);
-      } catch {}
+      // Non-blocking background update of last_login_at (does not delay authentication response)
+      supabaseAdmin
+        .from("hotel_admins")
+        .update({ last_login_at: new Date().toISOString() })
+        .eq("hotel_id", hotel.id)
+        .then(() => {})
+        .catch(() => {});
     } else {
       // First-time login: validate against DEFAULT_HOTEL_ADMIN_PASSWORD
       if (password !== DEFAULT_HOTEL_ADMIN_PASSWORD) {
@@ -77,9 +78,10 @@ export async function POST(request) {
         );
       }
 
-      // Auto-provision record in hotel_admins table
-      try {
-        await supabaseAdmin.from("hotel_admins").upsert(
+      // Non-blocking background auto-provisioning of record in hotel_admins table
+      supabaseAdmin
+        .from("hotel_admins")
+        .upsert(
           {
             hotel_id: hotel.id,
             hotel_name: hotel.name,
@@ -89,8 +91,9 @@ export async function POST(request) {
             last_login_at: new Date().toISOString(),
           },
           { onConflict: "hotel_id" }
-        );
-      } catch {}
+        )
+        .then(() => {})
+        .catch(() => {});
     }
 
     const token = await createHotelAdminSession({ hotelId: hotel.id, hotelName: hotel.name });
