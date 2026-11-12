@@ -84,6 +84,19 @@ export function BookingSearchBar({
   const [refreshSeed, setRefreshSeed] = useState(0);
   const [recentSearches, setRecentSearches] = useState([]);
 
+  // Proactive Route Prefetching for Instant 0ms Navigation to /hotels
+  useEffect(() => {
+    try {
+      router.prefetch("/hotels");
+    } catch (_) {}
+  }, [router]);
+
+  const prefetchHotels = useCallback(() => {
+    try {
+      router.prefetch("/hotels");
+    } catch (_) {}
+  }, [router]);
+
   // Load latest 2 previous search records (Google-style)
   useEffect(() => {
     try {
@@ -231,6 +244,9 @@ export function BookingSearchBar({
     if (rooms) params.set("rooms", rooms.toString());
 
     const targetUrl = `/hotels?${params.toString()}`;
+    try {
+      router.prefetch(targetUrl);
+    } catch (_) {}
 
     if (onSearch) {
       onSearch({
@@ -280,6 +296,8 @@ export function BookingSearchBar({
     <div ref={barWrapperRef} className={`relative w-full max-w-5xl z-30 ${className}`}>
       <form
         onSubmit={handleSearch}
+        onMouseEnter={prefetchHotels}
+        onFocusCapture={prefetchHotels}
         className={`relative z-30 flex flex-col md:flex-row items-stretch justify-between w-full transition-all duration-300 ${
           isFlat
             ? "bg-transparent rounded-none shadow-none border-none p-0"

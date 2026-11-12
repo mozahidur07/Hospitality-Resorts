@@ -98,7 +98,9 @@ export function SearchTransitionOverlay() {
 
   return (
     <div
-      className={`fixed inset-0 z-[100] pointer-events-none overflow-hidden transition-opacity duration-200 ${
+      className={`fixed inset-0 z-[100] ${
+        transitionPhase === "expanding" ? "pointer-events-auto cursor-wait" : "pointer-events-none"
+      } overflow-hidden transition-opacity duration-200 ${
         isFadingOut ? "opacity-0" : "opacity-100"
       }`}
       aria-hidden="true"

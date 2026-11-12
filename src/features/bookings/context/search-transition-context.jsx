@@ -33,22 +33,23 @@ export function SearchTransitionProvider({ children }) {
       // Step 1: Start expanding from origin rect to fullscreen
       setTransitionPhase("expanding");
 
-      // Step 2: Trigger route navigation as soon as expansion begins covering the screen
-      setTimeout(() => {
-        router.push(targetUrl);
-      }, 380);
+      // Step 2: Immediate route prefetch and navigation using React transition (no artificial delay)
+      try {
+        router.prefetch(targetUrl);
+      } catch (_) {}
 
-      // Step 3: Safety fallback timer (10 seconds) only in case navigation completely fails
+      React.startTransition(() => {
+        router.push(targetUrl);
+      });
+
+      // Step 3: Guaranteed navigation watchdog
+      // If development compile or serverless cold-start delays soft router.push, guaranteed assign ensures user arrives on /hotels
       if (safetyTimerRef.current) clearTimeout(safetyTimerRef.current);
       safetyTimerRef.current = setTimeout(() => {
-        if (isNavigatingRef.current) {
-          setTransitionPhase("fadeout");
-          setTimeout(() => {
-            setTransitionPhase("idle");
-            isNavigatingRef.current = false;
-          }, 250);
+        if (typeof window !== "undefined" && !window.location.pathname.startsWith("/hotels")) {
+          window.location.assign(targetUrl);
         }
-      }, 10000);
+      }, 3500);
     },
     [router]
   );
